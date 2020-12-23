@@ -2,8 +2,8 @@ import csv
 import itertools
 import re
 
-INPUT_FILE_NAME = "/Users/lucaskujawski/Projects/personal/tweets.csv"
-# INPUT_FILE_NAME = "tweets.csv"
+#INPUT_FILE_NAME = "/Users/lucaskujawski/Projects/personal/tweets.csv"
+INPUT_FILE_NAME = "tweets.csv"
 OUTPUT_FILE_NAME = "tweet-data.csv"
 
 MONTH = "Month"
@@ -33,8 +33,8 @@ class TweetsSummary:
                 month = row[TIMESTAMP][:7]
                 self.__init_month(month)
                 text = row[TEXT]
-                self.__find_items(month, text, pattern=r"#(\w+)", data_type=HASHTAG, ignore_values=INVALID_HASHTAGS)
-                self.__find_items(month, text, pattern=r"@(\w+)", data_type=MENTION)
+                self.__find_items(month, text, pattern=r"((#[\w\d_-]*)($|\s)+)", data_type=HASHTAG, ignore_values=INVALID_HASHTAGS)
+                self.__find_items(month, text, pattern=r"((@[\w\d_-]*)($|\s)+)", data_type=MENTION)
                 self.__find_items(month, text,
                                   pattern=r"(http|https)://(?P<website>[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
                                   data_type=WEBSITE, match_group='website')
@@ -73,7 +73,7 @@ class TweetsSummary:
     def __get_empty_dict():
         return {HASHTAG: {}, MENTION: {}, WEBSITE: {}}
 
-    def __find_items(self, month, text, pattern, data_type, ignore_values=None, match_group=0):
+    def __find_items(self, month, text, pattern, data_type, ignore_values=None, match_group=2):
         items = re.finditer(pattern, text)
         for item in items:
             item_text = item.group(match_group)

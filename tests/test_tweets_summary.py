@@ -30,14 +30,34 @@ class TestTweetsSummary(unittest.TestCase):
         expected_output, real_output = self.get_case_outputs(case=3)
         pd.testing.assert_frame_equal(real_output, expected_output)
 
-    def test_complex_hashtag(self):
-        pass
     def test_complex_mention(self):
-        pass
+        expected_output, real_output = self.get_case_outputs(case=4)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_complex_hashtag(self):
+        expected_output, real_output = self.get_case_outputs(case=5)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_composed_mention(self):
+        expected_output, real_output = self.get_case_outputs(case=6)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_composed_hashtag(self):
+        expected_output, real_output = self.get_case_outputs(case=7)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
     def test_complex_url(self):
-        pass
-    def test_utf_encoding(self):
-        pass
+        expected_output, real_output = self.get_case_outputs(case=8)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_hebrew_encoded_url(self):
+        expected_output, real_output = self.get_case_outputs(case=9)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_hebrew_decoded_url(self):
+        expected_output, real_output = self.get_case_outputs(case=10)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
     def test_ignored_hashtag_words(self):
         pass
     def test_multiple_months(self):
