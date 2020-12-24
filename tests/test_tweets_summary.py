@@ -13,6 +13,9 @@ class TestTweetsSummary(unittest.TestCase):
     def get_case_outputs(self, case):
         self.ts = TweetsSummary(input_file_name="test_{}/input.csv".format(case),
                            output_file_name="test_{}/real_output.csv".format(case))
+        self.ts.compute_input()
+        self.ts.summarize_input()
+        self.ts.output_summary()
         expected_output = pd.read_csv("test_{}/expected_output.csv".format(case), delimiter=",")
         real_output = pd.read_csv("test_{}/real_output.csv".format(case), delimiter=",")
         return expected_output, real_output

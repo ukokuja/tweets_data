@@ -1,9 +1,10 @@
 import csv
-import itertools
 import re
 
-#INPUT_FILE_NAME = "/Users/lucaskujawski/Projects/personal/tweets.csv"
-INPUT_FILE_NAME = "tweets.csv"
+INPUT_FILE_NAME = "/Users/lucaskujawski/Projects/personal/tweets.csv"
+from datetime import datetime
+
+# INPUT_FILE_NAME = "tweets.csv"
 OUTPUT_FILE_NAME = "tweet-data.csv"
 
 MONTH = "Month"
@@ -18,26 +19,33 @@ ENCODING = 'utf-8'
 
 
 class TweetsSummary:
-    def __init__(self, input_file_name=INPUT_FILE_NAME, output_file_name=OUTPUT_FILE_NAME):
+    def __init__(self, input_file_name=INPUT_FILE_NAME, output_file_name=OUTPUT_FILE_NAME, delimiter=";",
+                 date_format="%Y-%m-%d %H:%M:%S+00"):
         self.__texts_by_months = {}
         self.__max_by_months = []
-        self.compute_input(input_file_name)
-        self.summarize_input()
-        self.output_summary(output_file_name)
+        self.__input_file_name = input_file_name
+        self.__output_file_name = output_file_name
+        self.__delimiter = delimiter
+        self.__date_format = date_format
 
-    def compute_input(self, input_file_name):
-        with open(input_file_name, 'r', encoding=ENCODING) as file:
-            csv_dict = csv.DictReader(file, delimiter=";")
-            # csv_dict = itertools.islice(csv.DictReader(file, delimiter=";"), 1000*100)
+    def compute_input(self):
+        with open(self.__input_file_name, 'r', encoding=ENCODING) as file:
+            csv_dict = csv.DictReader(file, delimiter=self.__delimiter)
             for row in csv_dict:
+                # month = self.__get_month(row[TIMESTAMP])
                 month = row[TIMESTAMP][:7]
                 self.__init_month(month)
                 text = row[TEXT]
-                self.__find_items(month, text, pattern=r"((#[\w\d_-]*)($|\s)+)", data_type=HASHTAG, ignore_values=INVALID_HASHTAGS)
-                self.__find_items(month, text, pattern=r"((@[\w\d_-]*)($|\s)+)", data_type=MENTION)
+                self.__find_items(month, text, pattern=r"(\s|^)+(#[\w\d_-]+)+", data_type=HASHTAG,
+                                  ignore_values=INVALID_HASHTAGS)
+                self.__find_items(month, text, pattern=r"(\s|^)+(@[\w\d_-]+)+", data_type=MENTION)
                 self.__find_items(month, text,
-                                  pattern=r"(http|https)://(?P<website>[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
-                                  data_type=WEBSITE, match_group='website')
+                                  pattern=r"(http|https)://(?P<Website>[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
+                                  data_type=WEBSITE, match_group=WEBSITE)
+
+    def __get_month(self, timestamp):
+        parsed_date = datetime.strptime(timestamp, self.__date_format)
+        return parsed_date.strftime("%Y-%m")
 
     def summarize_input(self):
         sorted_items = sorted(self.__texts_by_months.items())
@@ -45,10 +53,11 @@ class TweetsSummary:
             max_website = self.__get_max_by_key(WEBSITE, value)
             max_hashtag = self.__get_max_by_key(HASHTAG, value)
             max_mention = self.__get_max_by_key(MENTION, value)
-            self.__max_by_months.append({MONTH: month, HASHTAG: max_hashtag, MENTION: max_mention, WEBSITE: max_website})
+            self.__max_by_months.append(
+                {MONTH: month, HASHTAG: max_hashtag, MENTION: max_mention, WEBSITE: max_website})
 
-    def output_summary(self, output_file_name):
-        with open(output_file_name, 'w', newline='', encoding=ENCODING) as csvfile:
+    def output_summary(self):
+        with open(self.__output_file_name, 'w', newline='', encoding=ENCODING) as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=OUTPUT_HEADERS)
             writer.writeheader()
             for value in self.__max_by_months:
@@ -62,8 +71,6 @@ class TweetsSummary:
             max_key = max_keys[0]
             return max_key
         return "None"
-
-
 
     def __init_month(self, month):
         if month not in self.__texts_by_months:
@@ -87,9 +94,15 @@ class TweetsSummary:
 
 
 if __name__ == '__main__':
-    import time
+    # import time
 
-    start = time.time()
+    # start = time.time()
     ts = TweetsSummary()
-    end = time.time()
-    print(end - start)
+    ts.compute_input()
+    ts.summarize_input()
+    ts.output_summary()
+    # end = time.time()
+    # print(end - start)
+
+#TODO: Add readme
+#TODO: Add documentation
