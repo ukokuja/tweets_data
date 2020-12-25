@@ -12,14 +12,13 @@ class TestTweetsSummary(unittest.TestCase):
 
     def get_case_outputs(self, case):
         self.ts = TweetsSummary(input_file_name="test_{}/input.csv".format(case),
-                           output_file_name="test_{}/real_output.csv".format(case))
+                                output_file_name="test_{}/real_output.csv".format(case))
         self.ts.compute_input()
         self.ts.summarize_input()
         self.ts.output_summary()
         expected_output = pd.read_csv("test_{}/expected_output.csv".format(case), delimiter=",")
         real_output = pd.read_csv("test_{}/real_output.csv".format(case), delimiter=",")
         return expected_output, real_output
-
 
     def test_mention_none(self):
         expected_output, real_output = self.get_case_outputs(case=1)
@@ -61,13 +60,29 @@ class TestTweetsSummary(unittest.TestCase):
         expected_output, real_output = self.get_case_outputs(case=10)
         pd.testing.assert_frame_equal(real_output, expected_output)
 
+    def test_hashtag_beginning(self):
+        expected_output, real_output = self.get_case_outputs(case=11)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_hashtag_end(self):
+        expected_output, real_output = self.get_case_outputs(case=12)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
+    def test_mention_beginning(self):
+        expected_output, real_output = self.get_case_outputs(case=13)
+        pd.testing.assert_frame_equal(real_output, expected_output)
+
     def test_multiple_months(self):
         pass
+
     def test_timing_5k_rows(self):
         pass
+
     def test_timing_50k_rows(self):
         pass
+
     def test_timing_500k_rows(self):
         pass
+
     def test_timing_4M_rows(self):
         pass
