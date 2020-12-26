@@ -45,9 +45,9 @@ class TweetsSummary:
                 month = row[TIMESTAMP][:7]
                 self.__init_month(month)
                 text = row[TEXT]
-                self.__find_items(month, text, pattern=r"(#[\w\d_-]+)+", data_type=HASHTAG,
+                self.__find_items(month, text, pattern=r"#[\w\d_-]+", data_type=HASHTAG,
                                   ignore_values=INVALID_HASHTAGS)
-                self.__find_items(month, text, pattern=r"(@[\w\d_-]+)+", data_type=MENTION)
+                self.__find_items(month, text, pattern=r"@[\w\d_-]+", data_type=MENTION)
                 self.__find_items(month, text,
                                   pattern=r"(http|https)://(?P<Website>[\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
                                   data_type=WEBSITE, match_group=WEBSITE)
@@ -104,7 +104,7 @@ class TweetsSummary:
         """
         return {HASHTAG: {}, MENTION: {}, WEBSITE: {}}
 
-    def __find_items(self, month, text, pattern, data_type, ignore_values=None, match_group=1):
+    def __find_items(self, month, text, pattern, data_type, ignore_values=None, match_group=0):
         """
         The function searchs for a pattern in the given text and set it to the computed
          dictionary, if it's not an ignored value.
@@ -135,6 +135,7 @@ class TweetsSummary:
 
 
 if __name__ == '__main__':
+
     ts = TweetsSummary()
     ts.compute_input()
     ts.summarize_input()
