@@ -5,7 +5,7 @@ import numpy
 import pandas
 
 #INPUT
-INPUT_FILE_NAME = "tweets.csv"
+INPUT_FILE_NAME = "/Users/lucaskujawski/Projects/personal/tweets.csv"
 TIMESTAMP = 'timestamp'
 TEXT = 'text'
 
